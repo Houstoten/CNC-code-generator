@@ -7,6 +7,7 @@ public class OutLineFinder{
 	private int startPix = 0;
 	private int countlvl = 0;
 	private ArrayList<AreaThread> threads;
+	private ArrayList<PixelPrimitive> buff;
 	private boolean[][] binarycopy;//copy of binary colored img to work with
 	private void runallthreads(){
 		for(AreaThread thread:threads)
@@ -23,7 +24,7 @@ public class OutLineFinder{
 	}
 	private void fillwitharea(PixelPrimitive[][] pixels){
 		threads = new ArrayList<>();
-		ArrayList<PixelPrimitive> buff = new ArrayList<>();
+		buff = new ArrayList<>();
 		threads.add(new AreaThread(new Thread(()->{
 			System.out.println("Lambda goes here");
 			for(int i=0; i<binarycopy.length;i++){
@@ -37,7 +38,8 @@ public class OutLineFinder{
 						}
 						else{
 							pixels[i][j].setoutline();
-							break;
+							int k = backtrack(pixels[i][j]);
+							break;//simple break without backtracking
 						}
 					}
 					System.out.println("RGB of "+i+" "+j+" is "+ pixels[i][j].getR()+" "+pixels[i][j].getG()+" "+pixels[i][j].getB()+" binary is "+pixels[i][j].getBinary());
@@ -49,10 +51,22 @@ public class OutLineFinder{
 		countlvl++;
 		runallthreads();
 	}
-	// private PixelPrimitive backtrack(){
-	// 	//stopped here
-
-	// }
+	private int counter = 0;
+	private int backtrack(PixelPrimitive nowpixel){//returns number in buff
+	// 	//stopped here. check if left and right pixels are not walls.
+		counter++;
+	 	nowpixel.setLeftStroke(checkIfLeftIsStroke(nowpixel.getx(),nowpixel.gety()));
+		nowpixel.setRightStroke(checkIfRightIsStroke(nowpixel.getx(),nowpixel.gety()));//check one more time for strokes
+		if(nowpixel.getLeftStroke() && nowpixel.getRightStroke()){
+			backtrack(buff.get(buff.size()-(counter + 1)));
+		}	 	
+		else{
+			System.out.println(0+" "+ counter);
+			counter = 0;
+			return 0;//not finished
+		}
+		return 1;
+	 }
 	private boolean checkIfLeftIsStroke(int iposition, int jposition){
 		if(iposition-1 >= 0){
 			return binarycopy[iposition-1][jposition];
