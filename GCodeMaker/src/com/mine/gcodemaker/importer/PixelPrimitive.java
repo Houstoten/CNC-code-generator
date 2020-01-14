@@ -8,7 +8,7 @@ public class PixelPrimitive{
 	private int green;
 	private int blue;
 	private boolean binar;
-	private boolean outline;//true if outline
+	private boolean avaliablenewarea;//true if new area available
 	private boolean checked;//if already been here
 	public ArrayList<PixelPrimitive> freeAround;
 	private boolean strokeleft;
@@ -29,7 +29,7 @@ public class PixelPrimitive{
 		boolean b =false;
 		if(blue == red)
 			b = true;
-		if((red + green + blue < 10)||((red == green == b) && (red < 150))||((Math.abs(red - green) < 10) && (Math.abs(red - blue) < 10) && (Math.abs(green - blue) < 10) && red< 150)){
+		if((red + green + blue < 10)||((red == green == b) && (red < 150) && (green < 150) && (blue < 150))||((Math.abs(red - green) < 10) && (Math.abs(red - blue) < 10) && (Math.abs(green - blue) < 10) && red< 150)){
 			//return true if color is nearby to black or if it`s grey. Reurns false if any other. It`s just a simple binarization algorithm which works only if stroke is black or gray.
 			return true;
 		}
@@ -43,11 +43,11 @@ public class PixelPrimitive{
 	public void setchecked(){
 		this.checked = true;
 	}
-	public boolean getoutline(){
-		return outline;
+	public boolean getnewarea(){
+		return avaliablenewarea;
 	}
-	public void setoutline(){
-		this.outline = true;
+	public void setnewarea(){
+		this.avaliablenewarea = true;
 	}
 	public void setx(int x){
 		this.xposition = x;
@@ -65,7 +65,7 @@ public class PixelPrimitive{
 			return yposition;
 		}catch(Exception ex){ex.printStackTrace();return -1;}
 	}
-	public void setLeftStroke(boolean b){
+	public void setLeftStroke(boolean b){//stroke or checked
 		this.strokeleft = b;
 	}
 	public void setRightStroke(boolean b){
@@ -81,7 +81,7 @@ public class PixelPrimitive{
 		this.red = r;
 		this.green = g;
 		this.blue = b;
-		this.outline = false;
+		this.avaliablenewarea = false;
 		this.checked = false;
 		this.strokeleft = false;
 		this.strokeright = false;

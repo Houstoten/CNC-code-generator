@@ -22,7 +22,16 @@ public class ImageImporter{
 				for(int j = 0; j < pixels[i].length; j++){
 					Color c = new Color(imgfile.getRGB(i,j));
 					pixels[i][j] = new PixelPrimitive(c.getRed(), c.getGreen(), c.getBlue());
+					if(pixels[i][j].getBinary()){
+						System.out.print("@");
+					}
+					else{
+						System.out.print(" ");
+					}
+					pixels[i][j].setx(i);
+					pixels[i][j].sety(j);
 				}
+				System.out.println();
 			}
 		}	
 	}
