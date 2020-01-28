@@ -8,7 +8,8 @@ public class OutLineFinder{
 		return buffs;
 	}
 	private ArrayDeque<Thread> threads = new ArrayDeque<>();
-	private HashMap<PixelPrimitive, ArrayList<PixelPrimitive>> buffs = new HashMap<>();;
+	private HashMap<PixelPrimitive, ArrayList<PixelPrimitive>> buffs = new HashMap<>();
+	//private ArrayList<PixelPrimitive> keysforbuffs = new ArrayList<>();
 	private PixelPrimitive pixels[][];
 	private void runallthreads(){
 		while(threads.peek()!=null){
@@ -18,6 +19,7 @@ public class OutLineFinder{
 				now.join();
 			}catch(InterruptedException ex){ex.printStackTrace();}
 		}
+		sortFoundedAreas();
 	}
 	private synchronized void fillwitharea(PixelPrimitive startp){
 		if(startp==null || startp.getchecked()){
@@ -119,9 +121,9 @@ public class OutLineFinder{
 				}
 
 			}
-			for(int i = 0; i < pixels.length; i++){
-				for(int j = 0; j < pixels[i].length; j++){
-					if(pixels[i][j].getchecked()){
+			for(int i = 0; i < pixels[0].length; i++){
+				for(int j = 0; j < pixels.length; j++){
+					if(pixels[j][i].getchecked()){
 						System.out.print("#");
 					}
 					else{
@@ -159,7 +161,6 @@ public class OutLineFinder{
 				return null;
 			}
 		}
-
 	}
 	private PixelPrimitive addKeyPixeltoKeyBuffer(PixelPrimitive pixel){//because buff initializes inside of method we changed code
 		if(!pixel.getLeftStroke() && !pixels[pixel.getx()-1][pixel.gety()].getchecked()){
@@ -171,7 +172,6 @@ public class OutLineFinder{
 		System.out.println("No Key Pixels For "+"X = "+pixel.getx()+" Y = "+pixel.gety());
 		return null;
 	}
-
 	private boolean checkIfUpIsStrokeOrChecked(PixelPrimitive nowpixel){
 		if(nowpixel.gety()-1 >= 0 && !pixels[nowpixel.getx()][nowpixel.gety()-1].getchecked()){
 			return pixels[nowpixel.getx()][nowpixel.gety()-1].getBinary();
@@ -204,7 +204,48 @@ public class OutLineFinder{
 			return true;
 		}
 	}
+	private void sortFoundedAreas(){//sorts with comparator
 
+		ArrayList<PixelPrimitive> keys = new ArrayList<>(buffs.keySet()); 
+		for(PixelPrimitive key:keys){
+			Collections.sort(buffs.get(key),new Comparator<PixelPrimitive>(){
+		public int compare(PixelPrimitive p1, PixelPrimitive p2){
+			if(alreadysorted){
+				if(p1.gety()==p2.gety()){
+					return p1.getx()-p2.getx();
+				}else{return 0;}
+			}else{return p1.getx()-p2.getx();}
+		}
+		boolean alreadysorted;
+		public Comparator<PixelPrimitive> setsorted(boolean alreadysorted){
+			this.alreadysorted = alreadysorted;
+			return this;
+		}
+	}.setsorted(false));
+
+			Collections.sort(buffs.get(key),new Comparator<PixelPrimitive>(){
+		public int compare(PixelPrimitive p1, PixelPrimitive p2){
+			if(alreadysorted){
+				if(p1.getx()==p2.getx()){
+					return p1.gety()-p2.gety();
+				}else{return 0;}
+			}else{return p1.gety()-p2.gety();}
+		}
+		boolean alreadysorted;
+		public Comparator<PixelPrimitive> setsorted(boolean alreadysorted){
+			this.alreadysorted = alreadysorted;
+			return this;
+		}
+	}.setsorted(true));
+			
+			System.out.println();
+			System.out.println(key.getx()+" "+key.gety()+" KEY HERE");
+			System.out.println();
+			for(PixelPrimitive pixel : buffs.get(key))
+				System.out.println(pixel.getx()+" "+pixel.gety());
+		}
+
+	}
 	public OutLineFinder(PixelPrimitive[][] pixels){
 		this.pixels = pixels;
 		PixelPrimitive startpixel = pixels[11][10];
@@ -212,4 +253,5 @@ public class OutLineFinder{
 		runallthreads();	
 
 	}
+		
 }

@@ -4,6 +4,9 @@ import java.util.*;
 public class PixelPrimitive{
 	private int xposition;
 	private int yposition;
+	private int zposition;
+	private boolean fullprocessed;
+	private boolean halfprocessed;//board of instrument
 	private int red;
 	private int green;
 	private int blue;
@@ -55,6 +58,9 @@ public class PixelPrimitive{
 	public void sety(int y){
 		this.yposition = y;
 	}
+	public void setz(int z){
+		this.zposition = z;
+	}
 	public int getx(){
 		try{
 			return xposition;
@@ -63,6 +69,11 @@ public class PixelPrimitive{
 	public int gety(){
 		try{
 			return yposition;
+		}catch(Exception ex){ex.printStackTrace();return -1;}
+	}
+	public int getz(){
+		try{
+			return zposition;
 		}catch(Exception ex){ex.printStackTrace();return -1;}
 	}
 	public void setLeftStroke(boolean b){//stroke or checked
@@ -77,6 +88,22 @@ public class PixelPrimitive{
 	public boolean getRightStroke(){
 		return strokeright;
 	}
+
+	
+	public void setfullprocessed(boolean b){
+		this.fullprocessed = b;
+	}
+	public boolean getfullprocessed(){
+		return fullprocessed;
+	}
+	public void sethalfprocessed(boolean b){
+		this.fullprocessed = b;
+	}
+	public boolean gethalfprocessed(){
+		return fullprocessed;
+	}
+
+
 	protected PixelPrimitive(int r, int g, int b){
 		this.red = r;
 		this.green = g;
@@ -85,6 +112,8 @@ public class PixelPrimitive{
 		this.checked = false;
 		this.strokeleft = false;
 		this.strokeright = false;
+		this.fullprocessed = false;
+		this.halfprocessed = false;
 		this.binar = this.binarize();
 	}
 }
